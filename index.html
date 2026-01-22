@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="ru" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INFOSERVICE — Единый коридор запуска</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap');
+
+        :root {
+            /* Переменные для Светлой темы (по умолчанию) */
+            --bg-color: #f8fafc;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --accent: #2563eb;
+            --accent-glow: rgba(37, 99, 235, 0.3);
+            --glass-bg: rgba(255, 255, 255, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.8);
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            --blob-color-1: #dbeafe;
+            --blob-color-2: #e0e7ff;
+            --blob-opacity: 0.8;
+            --nav-dot-bg: #cbd5e1;
+        }
+
+        /* Переменные для Тёмной темы */
+        html.dark {
+            --bg-color: #050507;
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+            --accent: #3b82f6;
+            --accent-glow: rgba(59, 130, 246, 0.5);
+            --glass-bg: rgba(20, 20, 25, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --card-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            --blob-color-1: #1e3a8a;
+            --blob-color-2: #1d4ed8;
+            --blob-opacity: 0.25;
+            --nav-dot-bg: rgba(255, 255, 255, 0.2);
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+
+        /* Живой фон (Blobs) */
+        .blob-cont {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+            background: radial-gradient(circle at 50% 50%, transparent 0%, var(--bg-color) 100%);
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: var(--blob-opacity);
+            transition: background 0.5s ease;
+            animation: moveBlob 20s infinite alternate;
+        }
+
+        .blob-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: var(--blob-color-1); }
+        .blob-2 { bottom: -10%; right: -10%; width: 40vw; height: 40vw; background: var(--blob-color-2); animation-delay: -5s; }
+
+        @keyframes moveBlob {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(30px, 50px) scale(1.1); }
+        }
+
+        /* Стеклянные карточки */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: var(--card-shadow);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .glass:hover {
+            transform: translateY(-5px) scale(1.01);
+            border-color: var(--accent);
+            box-shadow: 0 20px 40px var(--accent-glow);
+        }
+
+        /* Текст с градиентом */
+        .gradient-text {
+            background: linear-gradient(135deg, var(--text-main) 30%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        section {
+            padding: 100px 24px;
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        /* Картинки */
+        .image-card {
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transform: rotate(-2deg);
+            transition: 0.5s;
+            position: relative;
+        }
+        .image-card:hover {
+            transform: rotate(0deg) scale(1.02);
+        }
+        .image-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Кнопки контактов (футер) */
+        .btn-telegram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 16px 32px;
+            border-radius: 16px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Стили кнопок для тем */
+        html:not(.dark) .btn-telegram {
+            background: #229ED9;
+            color: white;
+            box-shadow: 0 10px 20px rgba(34, 158, 217, 0.3);
+        }
+        html:not(.dark) .btn-telegram:hover {
+            background: #1e8dc3;
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(34, 158, 217, 0.4);
+        }
+
+        html.dark .btn-telegram {
+            background: rgba(34, 158, 217, 0.15);
+            color: #229ED9;
+            border: 1px solid rgba(34, 158, 217, 0.3);
+        }
+        html.dark .btn-telegram:hover {
+            background: #229ED9;
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 0 25px rgba(34, 158, 217, 0.5);
+        }
+
+        /* Переключатель темы */
+        .theme-toggle {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 1100; /* Выше сайдбара */
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: var(--card-shadow);
+        }
+        .theme-toggle:hover {
+            transform: rotate(15deg) scale(1.1);
+        }
+        .theme-icon {
+            font-size: 1.5rem;
+        }
+
+        /* Навигация (точки) */
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            background: var(--nav-dot-bg);
+            border-radius: 50%;
+            margin: 18px 0;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .nav-dot.active {
+            background: var(--accent);
+            transform: scale(1.4);
+            box-shadow: 0 0 15px var(--accent);
+        }
+
+        .step-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin: 0 auto 1rem auto;
+            background: linear-gradient(135deg, var(--accent), #818cf8);
+            color: white;
+            box-shadow: 0 5px 15px var(--accent-glow);
+        }
+
+        /* --- STYLES FOR SIDEBAR --- */
+        .menu-btn {
+            position: fixed;
+            top: 24px;
+            left: 24px;
+            z-index: 1200;
+            width: 50px;
+            height: 50px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: 0.3s;
+            backdrop-filter: blur(10px);
+            box-shadow: var(--card-shadow);
+        }
+        .menu-btn span {
+            width: 26px;
+            height: 3px;
+            background-color: var(--text-main);
+            border-radius: 2px;
+            transition: 0.3s;
+        }
+        .menu-btn:hover {
+            transform: scale(1.05);
+            border-color: var(--accent);
+        }
+        /* Анимация кнопки в крестик */
+        .menu-btn.active span:nth-child(1) {
+            transform: translateY(9px) rotate(45deg);
+        }
+        .menu-btn.active span:nth-child(2) {
+            opacity: 0;
+        }
+        .menu-btn.active span:nth-child(3) {
+            transform: translateY(-9px) rotate(-45deg);
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 320px;
+            height: 100vh;
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border-right: 1px solid var(--glass-border);
+            z-index: 1100;
+            transform: translateX(-110%);
+            transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            padding: 100px 30px 40px 30px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 50px 0 100px rgba(0,0,0,0.3);
+        }
+        .sidebar.open {
+            transform: translateX(0);
+        }
+
+        .sidebar-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: 0.4s;
+            backdrop-filter: blur(3px);
+        }
+        .sidebar-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            padding: 12px 16px;
+            border-radius: 12px;
+            transition: 0.3s;
+            margin-bottom: 8px;
+            text-decoration: none;
+        }
+        .sidebar-link:hover {
+            background: rgba(255,255,255,0.1);
+            color: var(--text-main);
+            transform: translateX(10px);
+        }
+        .sidebar-link.active {
+            color: var(--accent);
+            background: rgba(37, 99, 235, 0.1);
+        }
+
+        .social-btn-side {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 12px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        .social-btn-side:hover {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px var(--accent-glow);
+        }
+        .social-icon {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        .sidebar-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            opacity: 0.7;
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- Фон -->
+<div class="blob-cont">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+</div>
+
+<!-- Кнопка меню (Гамбургер) -->
+<div class="menu-btn" onclick="toggleSidebar()">
+    <span></span>
+    <span></span>
+    <span></span>
+</div>
+
+<!-- Затемнение фона -->
+<div class="sidebar-overlay" onclick="toggleSidebar()" id="sidebarOverlay"></div>
+
+<!-- Сайдбар -->
+<div class="sidebar" id="sidebar">
+    <div class="mb-8">
+        <div class="inline-block px-3 py-1 rounded-full border border-[var(--accent)] text-[var(--accent)] font-bold text-xs tracking-widest">
+            INFOSERVICE
+        </div>
+    </div>
+
+    <div class="sidebar-title">Навигация</div>
+    <nav class="flex flex-col mb-auto">
+        <a href="#slide1" class="sidebar-link" onclick="toggleSidebar()">
+            <span></span> Главная
+        </a>
+        <a href="#slide2" class="sidebar-link" onclick="toggleSidebar()">
+            <span></span> О сервисе
+        </a>
+        <a href="#slide3" class="sidebar-link" onclick="toggleSidebar()">
+            <span></span> Модель работы
+        </a>
+        <a href="#slide4" class="sidebar-link" onclick="toggleSidebar()">
+            <span></span> Этапы запуска
+        </a>
+        <a href="#slide9" class="sidebar-link" onclick="toggleSidebar()">
+            <span></span> Клуб и Продажи
+        </a>
+        <a href="#slide11" class="sidebar-link" onclick="toggleSidebar()">
+            <span></span> Итог и Контакты
+        </a>
+    </nav>
+
+    <div class="border-t border-[var(--glass-border)] pt-6 mt-6">
+        <div class="sidebar-title">Соцсети</div>
+
+        <!-- Instagram -->
+        <a href="https://www.instagram.com/lana_gord2025?igsh=MTFjMHZkdzc3dzV6Yg==" target="_blank" class="social-btn-side">
+            <svg class="social-icon" viewBox="0 0 24 24">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+            </svg>
+            Instagram
+        </a>
+
+        <!-- Telegram Bot -->
+        <a href="https://t.me/tginfoservicebot" target="_blank" class="social-btn-side">
+            <svg class="social-icon" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.69-.52.36-1 .53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.42-.88.03-.24.29-.48.8-.74 3.13-1.36 5.22-2.26 6.27-2.69 2.98-1.23 3.6-1.45 4.01-1.46.09 0 .28.02.41.12.11.08.14.19.15.26-.01.07-.02.26-.03.4z"/>
+            </svg>
+            Telegram Бот
+        </a>
+
+        <!-- Telegram Manager -->
+        <a href="https://t.me/Svetlana_Gordeeva_Lana" target="_blank" class="social-btn-side">
+            <svg class="social-icon" viewBox="0 0 24 24">
+                <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18 1.897-.962 6.502-1.359 8.627-.168.9-.5 1.201-.82 1.23-.697.064-1.226-.461-1.901-.903-1.056-.692-1.653-1.123-2.678-1.799-1.185-.781-.417-1.21.258-1.911.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.139-5.062 3.345-.479.329-.913.489-1.302.481-.428-.008-1.252-.241-1.865-.44-.751-.244-1.349-.374-1.297-.789.027-.216.324-.437.893-.663 3.498-1.524 5.831-2.529 6.998-3.014 3.332-1.386 4.024-1.627 4.475-1.635.101-.002.322.023.465.14.119.096.152.227.172.325.016.093.036.306.02.471z"/>
+            </svg>
+            Менеджер
+        </a>
+    </div>
+</div>
+
+<!-- Переключатель темы -->
+<button class="theme-toggle" onclick="toggleTheme()" title="Переключить тему">
+    <span class="theme-icon" id="themeIcon">☀</span>
+</button>
+
+<!-- Навигация справа -->
+<div class="fixed right-8 top-1/2 -translate-y-1/2 z-50 hidden md:block">
+    <div class="nav-dot active" onclick="scrollToSection('slide1')"></div>
+    <div class="nav-dot" onclick="scrollToSection('slide2')"></div>
+    <div class="nav-dot" onclick="scrollToSection('slide3')"></div>
+    <div class="nav-dot" onclick="scrollToSection('slide4')"></div>
+    <div class="nav-dot" onclick="scrollToSection('slide5')"></div>
+    <div class="nav-dot" onclick="scrollToSection('slide7')"></div>
+    <div class="nav-dot" onclick="scrollToSection('slide9')"></div>
+    <div class="nav-dot" onclick="scrollToSection('slide11')"></div>
+</div>
+
+<!-- СЛАЙД 1: ОБЛОЖКА -->
+<section id="slide1" data-aos="fade-in">
+    <div class="grid md:grid-cols-2 gap-12 items-center">
+        <div class="text-left">
+            <div class="inline-block px-4 py-2 rounded-full border border-[var(--accent)] text-[var(--accent)] font-bold text-sm tracking-widest mb-6">
+                INFOSERVICE
+            </div>
+            <h1 class="text-5xl md:text-8xl font-extrabold mb-8 gradient-text leading-tight tracking-tight">
+                Единый коридор <br> запуска онлайн-продукта
+            </h1>
+            <div class="flex flex-wrap gap-8 text-xl font-medium text-[var(--text-muted)]">
+                <span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-[var(--accent)]"></span> Прозрачно</span>
+                <span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-[var(--accent)]"></span> Поэтапно</span>
+                <span class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-[var(--accent)]"></span> Без долей</span>
+            </div>
+        </div>
+        <div class="hidden md:block" data-aos="fade-left">
+            <div class="image-card h-[500px]">
+                <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070&auto=format&fit=crop" alt="Architecture">
+                <div class="absolute inset-0 bg-gradient-to-t from-[var(--bg-color)] to-transparent opacity-20"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- СЛАЙД 2: ЧТО ТАКОЕ INFOSERVICE -->
+<section id="slide2">
+    <div class="grid md:grid-cols-2 gap-16 items-center">
+        <div class="order-2 md:order-1 relative" data-aos="fade-right">
+            <div class="image-card h-[400px] rotate-3 hover:rotate-0">
+                <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070&auto=format&fit=crop" alt="Consulting Team">
+            </div>
+            <div class="absolute -bottom-6 -right-6 glass p-6 max-w-xs animate-bounce" style="animation-duration: 3s;">
+                <p class="font-bold text-[var(--accent)]">От идеи до решения</p>
+            </div>
+        </div>
+        <div class="order-1 md:order-2" data-aos="fade-left">
+            <h2 class="text-4xl font-bold mb-8">Что такое INFOSERVICE</h2>
+            <p class="text-2xl leading-relaxed text-[var(--text-muted)] mb-8 font-light">
+                <span class="text-[var(--accent)] font-bold">INFOSERVICE</span> — это консалтинг-сервис по запуску и развитию онлайн-продуктов.
+            </p>
+            <div class="glass p-8 border-l-4 border-[var(--accent)]">
+                <p class="text-lg font-medium">
+                    Мы не продаём отдельные услуги. Мы берём ответственность за архитектуру и ведём клиента по одному логичному пути — от идеи до готового решения.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- СЛАЙД 3: ПОЧЕМУ МЫ НЕ РАБОТАЕМ 50/50 -->
+<section id="slide3">
+    <div class="text-center mb-16" data-aos="fade-up">
+        <h2 class="text-5xl font-bold mb-4">Почему мы не работаем 50/50</h2>
+    </div>
+    <div class="grid md:grid-cols-2 gap-8">
+        <div class="glass p-10 border-red-500/20" data-aos="fade-right">
+            <div class="flex items-center justify-between mb-8">
+                <h3 class="text-red-500 text-2xl font-bold">Классическая модель продюссирования</h3>
+                <span class="text-3xl">📉</span>
+            </div>
+            <ul class="space-y-6 text-xl text-[var(--text-muted)]">
+                <li class="flex items-center gap-4">
+                    <span class="w-8 h-8 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center font-bold">×</span> забирает долю
+                </li>
+                <li class="flex items-center gap-4">
+                    <span class="w-8 h-8 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center font-bold">×</span> лишает клиента контроля
+                </li>
+                <li class="flex items-center gap-4">
+                    <span class="w-8 h-8 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center font-bold">×</span> создаёт конфликт интересов
+                </li>
+            </ul>
+        </div>
+        <div class="glass p-10 border-[var(--accent)]/30" data-aos="fade-left">
+            <div class="flex items-center justify-between mb-8">
+                <h3 class="text-[var(--accent)] text-2xl font-bold">INFOSERVICE</h3>
+                <span class="text-3xl">📈</span>
+            </div>
+            <div class="space-y-6 h-full flex flex-col justify-center">
+                <p class="text-3xl font-extrabold gradient-text">Вы владеете продуктом.</p>
+                <p class="text-xl text-[var(--text-muted)] leading-relaxed">Мы отвечаем за стратегию и реализацию.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- СЛАЙД 4: ЕДИНЫЙ КОРИДОР -->
+<section id="slide4">
+    <h2 class="text-5xl font-bold mb-16 text-center" data-aos="fade-down">Единый коридор работы</h2>
+    <div class="grid md:grid-cols-5 gap-6 mb-16">
+        <div class="glass p-6 text-center group" data-aos="zoom-in" data-aos-delay="100">
+            <div class="step-circle group-hover:scale-110 transition-transform">1</div>
+            <p class="font-bold">Диагностика и стратегия</p>
+        </div>
+        <div class="glass p-6 text-center group" data-aos="zoom-in" data-aos-delay="200">
+            <div class="step-circle group-hover:scale-110 transition-transform">2</div>
+            <p class="font-bold">Формирование этапов</p>
+        </div>
+        <div class="glass p-6 text-center group" data-aos="zoom-in" data-aos-delay="300">
+            <div class="step-circle group-hover:scale-110 transition-transform">3</div>
+            <p class="font-bold">Реализация по этапам</p>
+        </div>
+        <div class="glass p-6 text-center group" data-aos="zoom-in" data-aos-delay="400">
+            <div class="step-circle group-hover:scale-110 transition-transform">4</div>
+            <p class="font-bold">Запуск продукта</p>
+        </div>
+        <div class="glass p-6 text-center group" data-aos="zoom-in" data-aos-delay="500">
+            <div class="step-circle group-hover:scale-110 transition-transform">5</div>
+            <p class="font-bold">Сопровождение</p>
+        </div>
+    </div>
+    <div class="flex flex-wrap justify-center gap-8 text-xl text-[var(--text-muted)] font-semibold" data-aos="fade-up">
+        <span class="px-6 py-3 rounded-full border border-[var(--glass-border)] glass">Без выбора тарифов</span>
+        <span class="px-6 py-3 rounded-full border border-[var(--glass-border)] glass">Без хаоса</span>
+        <span class="px-6 py-3 rounded-full border border-[var(--glass-border)] glass">Без перегруза решений</span>
+    </div>
+</section>
+
+<!-- СЛАЙД 5: ДИАГНОСТИКА -->
+<section id="slide5">
+    <div class="grid md:grid-cols-2 gap-10">
+        <div class="glass p-12" data-aos="fade-right">
+            <div class="flex items-center gap-4 mb-6">
+                <span class="bg-[var(--accent)] text-white px-3 py-1 rounded font-bold text-xs uppercase">Этап 1</span>
+                <h2 class="text-3xl font-bold">Диагностика</h2>
+            </div>
+            <p class="text-xl mb-8 italic text-[var(--text-muted)]">Мы начинаем с анализа, а не с гипотез.</p>
+            <div class="space-y-4 mb-10">
+                <div class="flex items-center gap-4 text-lg text-[var(--text-muted)]">
+                    <span class="text-[var(--accent)] text-xl">✔</span> анализ целевой аудитории
+                </div>
+                <div class="flex items-center gap-4 text-lg text-[var(--text-muted)]">
+                    <span class="text-[var(--accent)] text-xl">✔</span> анализ конкурентов
+                </div>
+                <div class="flex items-center gap-4 text-lg text-[var(--text-muted)]">
+                    <span class="text-[var(--accent)] text-xl">✔</span> оценка экспертизы
+                </div>
+                <div class="flex items-center gap-4 text-lg text-[var(--text-muted)]">
+                    <span class="text-[var(--accent)] text-xl">✔</span> выбор модели продукта
+                </div>
+            </div>
+            <div class="p-6 bg-[var(--accent)]/10 border border-[var(--accent)]/20 rounded-2xl">
+                <p class="text-[var(--accent)] font-bold mb-1 uppercase text-sm">Результат:</p>
+                <p class="text-2xl font-bold">чёткий план работ и понятная смета.</p>
+            </div>
+        </div>
+        <div class="flex flex-col gap-6" data-aos="fade-left">
+            <div class="image-card h-48">
+                <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=2026&auto=format&fit=crop" alt="Finance">
+            </div>
+            <div class="glass p-10 flex-grow">
+                <h2 class="text-3xl font-bold mb-6">Поэтапная оплата</h2>
+                <p class="text-lg text-[var(--text-muted)] mb-6">После диагностики мы фиксируем:</p>
+                <div class="flex gap-4 mb-8">
+                    <span class="px-4 py-2 bg-[var(--accent)]/10 rounded-lg font-bold">Этапы</span>
+                    <span class="px-4 py-2 bg-[var(--accent)]/10 rounded-lg font-bold">Стоимость</span>
+                    <span class="px-4 py-2 bg-[var(--accent)]/10 rounded-lg font-bold">Сроки</span>
+                </div>
+                <p class="text-2xl font-extrabold text-[var(--accent)]">Вы платите только за конкретный результат.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- СЛАЙД 7: ЭТАПЫ -->
+<section id="slide7">
+    <div class="grid md:grid-cols-2 gap-16">
+        <div data-aos="fade-up">
+            <h2 class="text-4xl font-bold mb-10">Основные этапы реализации</h2>
+            <div class="space-y-4">
+                <div class="glass p-6 text-xl font-bold flex justify-between items-center hover:pl-10 transition-all cursor-default group">
+                    Стратегия <span class="text-[var(--accent)] opacity-50">01</span>
+                </div>
+                <div class="glass p-6 text-xl font-bold flex justify-between items-center hover:pl-10 transition-all cursor-default group">
+                    Архитектура продукта <span class="text-[var(--accent)] opacity-50">02</span>
+                </div>
+                <div class="glass p-6 text-xl font-bold flex justify-between items-center hover:pl-10 transition-all cursor-default group">
+                    Методология <span class="text-[var(--accent)] opacity-50">03</span>
+                </div>
+                <div class="glass p-6 text-xl font-bold flex justify-between items-center hover:pl-10 transition-all cursor-default group">
+                    Упаковка <span class="text-[var(--accent)] opacity-50">04</span>
+                </div>
+                <div class="glass p-6 text-xl font-bold flex justify-between items-center hover:pl-10 transition-all cursor-default group">
+                    Система продаж <span class="text-[var(--accent)] opacity-50">05</span>
+                </div>
+            </div>
+        </div>
+        <div data-aos="fade-up" data-aos-delay="300" class="flex flex-col gap-8">
+            <div class="glass p-10">
+                <h2 class="text-2xl font-bold mb-6">Дополнительные услуги</h2>
+                <p class="text-[var(--text-muted)] mb-6">Технические инструменты оплачиваются отдельно:</p>
+                <div class="flex flex-wrap gap-3">
+                    <span class="px-4 py-2 bg-[var(--accent)]/5 border border-[var(--accent)]/10 rounded-lg text-sm font-bold">сайт</span>
+                    <span class="px-4 py-2 bg-[var(--accent)]/5 border border-[var(--accent)]/10 rounded-lg text-sm font-bold">лендинг</span>
+                    <span class="px-4 py-2 bg-[var(--accent)]/5 border border-[var(--accent)]/10 rounded-lg text-sm font-bold">реклама</span>
+                    <span class="px-4 py-2 bg-[var(--accent)]/5 border border-[var(--accent)]/10 rounded-lg text-sm font-bold">чат-бот</span>
+                </div>
+            </div>
+            <div class="glass p-10 bg-[var(--accent)]/10 border border-[var(--accent)]/30">
+                <h3 class="text-xl font-bold mb-6">INFOSERVICE:</h3>
+                <ul class="space-y-4 text-lg font-medium">
+                    <li class="flex items-center gap-3">
+                        <span class="bg-[var(--accent)] p-1 rounded-full text-xs text-white">●</span> разрабатывает структуру
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <span class="bg-[var(--accent)] p-1 rounded-full text-xs text-white">●</span> подбирает специалистов
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <span class="bg-[var(--accent)] p-1 rounded-full text-xs text-white">●</span> координирует процесс
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- СЛАЙД 9: ПРОДАЖИ -->
+<section id="slide9">
+    <div class="grid md:grid-cols-2 gap-10">
+        <div class="glass p-12 relative overflow-hidden group" data-aos="flip-up">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-[var(--accent)]/20 to-transparent rounded-bl-full"></div>
+            <h2 class="text-3xl font-bold mb-8">Продажи продукта</h2>
+            <ul class="space-y-4 mb-10 text-xl font-bold text-[var(--text-muted)]">
+                <li class="flex items-center gap-3"><span class="text-[var(--accent)]">—</span> продавать продукт</li>
+                <li class="flex items-center gap-3"><span class="text-[var(--accent)]">—</span> находить клиентов</li>
+                <li class="flex items-center gap-3"><span class="text-[var(--accent)]">—</span> подключать партнёров</li>
+            </ul>
+            <div class="border-t border-[var(--glass-border)] pt-8">
+                <p class="text-4xl font-black text-[var(--accent)]">20%</p>
+                <p class="text-[var(--text-muted)] mt-2 font-medium">от продаж. Без долевого участия.</p>
+            </div>
+        </div>
+
+        <div class="relative group" data-aos="flip-up" data-aos-delay="200">
+            <div class="image-card absolute inset-0 opacity-40">
+                <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070&auto=format&fit=crop" alt="Community">
+            </div>
+            <div class="glass p-12 h-full relative z-10 bg-[var(--glass-bg)] backdrop-blur-xl">
+                <h2 class="text-3xl font-bold mb-6">Клуб INFOSERVICE</h2>
+                <p class="text-[var(--accent)] font-bold mb-8 uppercase tracking-widest text-sm bg-[var(--accent)]/10 inline-block px-3 py-1 rounded">Платный закрытый клуб</p>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="p-4 bg-[var(--accent)]/5 rounded-xl font-bold text-center border border-[var(--accent)]/10">библиотека</div>
+                    <div class="p-4 bg-[var(--accent)]/5 rounded-xl font-bold text-center border border-[var(--accent)]/10">база</div>
+                    <div class="p-4 bg-[var(--accent)]/5 rounded-xl font-bold text-center border border-[var(--accent)]/10">сообщество</div>
+                    <div class="p-4 bg-[var(--accent)]/5 rounded-xl font-bold text-center border border-[var(--accent)]/10">коллаборации</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- СЛАЙД 11: ИТОГ И КОНТАКТЫ -->
+<section id="slide11" class="text-center">
+    <div data-aos="zoom-in">
+        <h2 class="text-6xl font-black mb-16 gradient-text uppercase tracking-tight">Итог для клиента</h2>
+        <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-6 text-left mb-16">
+            <div class="glass p-8 flex items-center gap-6 border-green-500/20">
+                <span class="w-12 h-12 bg-green-500/10 text-green-500 rounded-full flex items-center justify-center text-2xl">✔</span>
+                <span class="text-xl font-bold">готовый онлайн-продукт</span>
+            </div>
+            <div class="glass p-8 flex items-center gap-6 border-green-500/20">
+                <span class="w-12 h-12 bg-green-500/10 text-green-500 rounded-full flex items-center justify-center text-2xl">✔</span>
+                <span class="text-xl font-bold">прозрачную систему</span>
+            </div>
+            <div class="glass p-8 flex items-center gap-6 border-green-500/20">
+                <span class="w-12 h-12 bg-green-500/10 text-green-500 rounded-full flex items-center justify-center text-2xl">✔</span>
+                <span class="text-xl font-bold">контроль над бизнесом</span>
+            </div>
+            <div class="glass p-8 flex items-center gap-6 border-green-500/20">
+                <span class="w-12 h-12 bg-green-500/10 text-green-500 rounded-full flex items-center justify-center text-2xl">✔</span>
+                <span class="text-xl font-bold">понятный бюджет</span>
+            </div>
+        </div>
+
+        <div class="glass p-10 max-w-3xl mx-auto">
+            <h3 class="text-2xl font-bold mb-8">Связаться с нами:</h3>
+            <div class="flex flex-col md:flex-row gap-6 justify-center">
+                <a href="https://t.me/tginfoservicebot" class="btn-telegram" target="_blank">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 11.944 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+                    Наш Телеграмм - бот
+                </a>
+                <a href="https://t.me/Svetlana_Gordeeva_Lana" class="btn-telegram" target="_blank">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 11.944 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+                    Наш Менеджер
+                </a>
+            </div>
+        </div>
+
+        <!-- Декоративное фото снизу -->
+        <div class="max-w-md mx-auto mt-12 opacity-50 grayscale hover:grayscale-0 transition-all duration-700">
+            <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=2070&auto=format&fit=crop" class="rounded-2xl shadow-xl" alt="Work">
+        </div>
+    </div>
+</section>
+
+<footer class="py-12 text-center text-[var(--text-muted)] border-t border-[var(--glass-border)]">
+    <p class="mb-4 font-medium">INFOSERVICE — Твой путь к результату</p>
+    <p class="text-xs uppercase tracking-widest">© 2026. Все права защищены.</p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script>
+    // Инициализация анимаций
+    AOS.init({
+        duration: 800,
+        once: false,
+        mirror: true,
+        offset: 80
+    });
+
+    // Скролл
+    function scrollToSection(id) {
+        document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Логика сайдбара
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    const menuBtn = document.querySelector('.menu-btn');
+
+    function toggleSidebar() {
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('open');
+        menuBtn.classList.toggle('active');
+    }
+
+    // Логика переключения темы
+    const html = document.documentElement;
+    const themeIcon = document.getElementById('themeIcon');
+
+    function toggleTheme() {
+        if (html.classList.contains('dark')) {
+            html.classList.remove('dark');
+            themeIcon.textContent = '☾'; // Символ для переключения в темную (сейчас светлая)
+            localStorage.setItem('theme', 'light');
+        } else {
+            html.classList.add('dark');
+            themeIcon.textContent = '☀'; // Символ для переключения в светлую (сейчас темная)
+            localStorage.setItem('theme', 'dark');
+        }
+    }
+
+    // Проверка сохраненной темы
+    if (localStorage.getItem('theme') === 'light') {
+        html.classList.remove('dark');
+        themeIcon.textContent = '☾';
+    } else {
+        // По умолчанию темная
+        html.classList.add('dark');
+        themeIcon.textContent = '☀';
+    }
+
+    // Активная навигация
+    window.addEventListener('scroll', () => {
+        const sections = ['slide1', 'slide2', 'slide3', 'slide4', 'slide5', 'slide7', 'slide9', 'slide11'];
+        const dots = document.querySelectorAll('.nav-dot');
+        let current = '';
+        sections.forEach(id => {
+            const section = document.getElementById(id);
+            if (pageYOffset >= section.offsetTop - 300) current = id;
+        });
+        dots.forEach((dot, index) => {
+            dot.classList.remove('active');
+            if (sections[index] === current) dot.classList.add('active');
+        });
+    });
+</script>
+</body>
+</html>
