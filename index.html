@@ -10,7 +10,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap');
 
         :root {
-            /* Переменные для Светлой темы (по умолчанию) */
+            /* С. Т. */
             --bg-color: #f8fafc;
             --text-main: #1e293b;
             --text-muted: #64748b;
@@ -25,7 +25,7 @@
             --nav-dot-bg: #cbd5e1;
         }
 
-        /* Переменные для Тёмной темы */
+        /* T. T. */
         html.dark {
             --bg-color: #050507;
             --text-main: #ffffff;
@@ -50,7 +50,7 @@
             transition: background-color 0.5s ease, color 0.5s ease;
         }
 
-        /* Живой фон (Blobs) */
+        /* фон */
         .blob-cont {
             position: fixed;
             top: 0;
@@ -114,7 +114,7 @@
             margin: 0 auto;
         }
 
-        /* Картинки */
+        /* фото */
         .image-card {
             border-radius: 24px;
             overflow: hidden;
@@ -132,7 +132,7 @@
             object-fit: cover;
         }
 
-        /* Кнопки контактов (футер) */
+        /* контакты */
         .btn-telegram {
             display: flex;
             align-items: center;
@@ -147,7 +147,7 @@
             overflow: hidden;
         }
 
-        /* Стили кнопок для тем */
+        /*  */
         html:not(.dark) .btn-telegram {
             background: #229ED9;
             color: white;
@@ -171,12 +171,12 @@
             box-shadow: 0 0 25px rgba(34, 158, 217, 0.5);
         }
 
-        /* Переключатель темы */
+        /* тема */
         .theme-toggle {
             position: fixed;
             top: 24px;
             right: 24px;
-            z-index: 1100; /* Выше сайдбара */
+            z-index: 1100; 
             width: 48px;
             height: 48px;
             border-radius: 50%;
@@ -197,7 +197,7 @@
             font-size: 1.5rem;
         }
 
-        /* Навигация (точки) */
+        /* Навигация */
         .nav-dot {
             width: 12px;
             height: 12px;
@@ -227,7 +227,7 @@
             box-shadow: 0 5px 15px var(--accent-glow);
         }
 
-        /* --- STYLES FOR SIDEBAR --- */
+        /* стиль */
         .menu-btn {
             position: fixed;
             top: 24px;
@@ -259,7 +259,7 @@
             transform: scale(1.05);
             border-color: var(--accent);
         }
-        /* Анимация кнопки в крестик */
+        /* Анимация кнопки */
         .menu-btn.active span:nth-child(1) {
             transform: translateY(9px) rotate(45deg);
         }
@@ -377,7 +377,7 @@
     <div class="blob blob-2"></div>
 </div>
 
-<!-- Кнопка меню (Гамбургер) -->
+<!-- Кнопка меню -->
 <div class="menu-btn" onclick="toggleSidebar()">
     <span></span>
     <span></span>
@@ -446,7 +446,7 @@
     </div>
 </div>
 
-<!-- Переключатель темы -->
+<!--  темы -->
 <button class="theme-toggle" onclick="toggleTheme()" title="Переключить тему">
     <span class="theme-icon" id="themeIcon">☀</span>
 </button>
@@ -833,3 +833,4 @@
 </body>
 
 </html>
+
